@@ -3,10 +3,10 @@
  * @Author: wtto
  * @Date: 2020-03-06 09:58:01
  * @LastEditors: wtto
- * @LastEditTime: 2020-03-06 16:04:26
+ * @LastEditTime: 2020-03-06 16:28:08
  * @FilePath: \Aliyun-oss-storage\src\Plugins\SignUrl.php
  */
-namespace App\Utils\AliOSS\Plugins;
+namespace Wtto\AliOSS\Plugins;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use League\Flysystem\Plugin\AbstractPlugin;
