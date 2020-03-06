@@ -61,8 +61,8 @@ ALIOSS_KEYID=<Your Aliyun OSS AccessKeyId>
 ALIOSS_KEYSECRET=<Your Aliyun OSS AccessKeySecret>
 ALIOSS_BUCKETNAME=<OSS bucket name>
 ALIOSS_ENDPOINT=<the endpoint of OSS, E.g: oss-cn-hangzhou.aliyuncs.com | custom domain, E.g:img.abc.com>
-ALIOSS_ENDPOINT_INTERNAL=<<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com>>
-ALIOSS_DOMAIN=<<CDN domain, cdn域名>
+ALIOSS_ENDPOINT_INTERNAL=<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com>
+ALIOSS_DOMAIN=<CDN domain, cdn域名>
 ALIOSS_SSL=<true|false>
 ALIOSS_CNAME=<true|false>
 ALIOSS_DEBUG=<true|false>
@@ -118,7 +118,9 @@ Storage::deleteDirectory($directory); // Recursively delete a directory.It will 
 // new plugin for v2.0 version
 Storage::putRemoteFile('target/path/to/file/jacob.jpg', 'http://example.com/jacob.jpg'); //upload remote file to storage by remote url
 // new function for v2.0.1 version
-Storage::url('path/to/img.jpg') // get the file url
+Storage::url('path/to/img.jpg'); // get the file url
+// new function for v2.1.1
+Storage::signUrl('path/to/img.jpg',$timeout); // get the file url with signature,default timeout = 3600
 ```
 
 ## Documentation
