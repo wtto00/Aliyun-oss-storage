@@ -562,12 +562,23 @@ class AliOssAdapter extends AbstractAdapter
 
     /**
      * @param $path
+     * @param number $expire_time seconds
      *
      * @return string
      */
-    public function getUrl( $path )
+    public function getUrl( $path, $expire_time = 3600 )
     {
         if (!$this->has($path)) throw new FileNotFoundException($filePath.' not found');
+        
+        $acl = $this->getObjectACL($path);
+        if ($acl == OssClient::OSS_ACL_TYPE_PRIVATE) {
+            $signedUrl = $this->client->signUrl($this->bucket, $path, $expire_time);
+            if ($this->ssl) {
+                $signedUrl = str_replace_first('http://', 'https://', $signedUrl);
+            }
+            return $signedUrl;
+        }
+        
         return ( $this->ssl ? 'https://' : 'http://' ) . ( $this->isCname ? ( $this->cdnDomain == '' ? $this->endPoint : $this->cdnDomain ) : $this->bucket . '.' . $this->endPoint ) . '/' . ltrim($path, '/');
     }
 
