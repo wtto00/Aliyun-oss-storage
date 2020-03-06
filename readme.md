@@ -1,63 +1,86 @@
 # Aliyun-oss-storage for Laravel 5+
-Aliyun oss filesystem storage adapter for laravel 5. You can use Aliyun OSS just like laravel Storage as usual.    
-借鉴了一些优秀的代码，综合各方，同时做了更多优化，将会添加更多完善的接口和插件，打造Laravel最好的OSS Storage扩展
+
+本仓库 Fork 自[jacobcyl/Aliyun-oss-storage](https://github.com/jacobcyl/Aliyun-oss-storage)
+由于作者长时间不更新，所以自己稍微修改下，重新发布。
+
+Aliyun oss filesystem storage adapter for laravel 5. You can use Aliyun OSS just like laravel Storage as usual.  
+借鉴了一些优秀的代码，综合各方，同时做了更多优化，将会添加更多完善的接口和插件，打造 Laravel 最好的 OSS Storage 扩展
+
 ## Inspired By
+
 - [thephpleague/flysystem-aws-s3-v2](https://github.com/thephpleague/flysystem-aws-s3-v2)
-- [apollopy/flysystem-aliyun-oss](https://github.com/apollopy/flysystem-aliyun-oss) 
+- [apollopy/flysystem-aliyun-oss](https://github.com/apollopy/flysystem-aliyun-oss)
 
 ## Require
+
 - Laravel 5+
 - cURL extension
 
 ##Installation
-In order to install AliOSS-storage, just add
+In order to install AliOSS-storage, you can simply run below command:
 
-    "jacobcyl/ali-oss-storage": "^2.1"
-
-to your composer.json. Then run `composer install` or `composer update`.  
-Or you can simply run below command to install:
-
-    "composer require jacobcyl/ali-oss-storage:^2.1"
-    
-Then in your `config/app.php` add this line to providers array:
-```php
-Jacobcyl\AliOSS\AliOssServiceProvider::class,
+```bash
+composer require wtto/ali-oss-storage
 ```
+
+Then in your `config/app.php` add this line to providers array:
+
+```php
+Wtto\AliOSS\AliOssServiceProvider::class,
+```
+
 ## Configuration
-Add the following in app/filesystems.php:
+
+Add the following in `app/filesystems.php`:
+
 ```php
 'disks'=>[
     ...
     'oss' => [
-            'driver'        => 'oss',
-            'access_id'     => '<Your Aliyun OSS AccessKeyId>',
-            'access_key'    => '<Your Aliyun OSS AccessKeySecret>',
-            'bucket'        => '<OSS bucket name>',
-            'endpoint'      => '<the endpoint of OSS, E.g: oss-cn-hangzhou.aliyuncs.com | custom domain, E.g:img.abc.com>', // OSS 外网节点或自定义外部域名
-            //'endpoint_internal' => '<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com>', // v2.0.4 新增配置属性，如果为空，则默认使用 endpoint 配置(由于内网上传有点小问题未解决，请大家暂时不要使用内网节点上传，正在与阿里技术沟通中)
-            'cdnDomain'     => '<CDN domain, cdn域名>', // 如果isCName为true, getUrl会判断cdnDomain是否设定来决定返回的url，如果cdnDomain未设置，则使用endpoint来生成url，否则使用cdn
-            'ssl'           => <true|false> // true to use 'https://' and false to use 'http://'. default is false,
-            'isCName'       => <true|false> // 是否使用自定义域名,true: 则Storage.url()会使用自定义的cdn或域名生成文件url， false: 则使用外部节点生成url
-            'debug'         => <true|false>
+        'driver'            => 'oss',
+        'access_id'         => env('ALIOSS_KEYID', null), //Your Aliyun OSS AccessKeyId
+        'access_key'        => env('ALIOSS_KEYSECRET', null), //Your Aliyun OSS AccessKeySecret
+        'bucket'            => env('ALIOSS_BUCKETNAME', null), //OSS bucket name
+        'endpoint'          => env('ALIOSS_ENDPOINT', null), //<the endpoint of OSS, E.g: oss-cn-hangzhou.aliyuncs.com | custom domain, E.g:img.abc.com> OSS 外网节点或自定义外部域名
+        'endpoint_internal' => env('ALIOSS_ENDPOINT_INTERNAL', null), //<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com> v2.0.4 新增配置属性，如果为空，则默认使用 endpoint 配置(由于内网上传有点小问题未解决，请大家暂时不要使用内网节点上传，正在与阿里技术沟通中)
+        'cdnDomain'         => env('ALIOSS_DOMAIN', null), //<CDN domain, cdn域名> 如果isCName为true, getUrl会判断cdnDomain是否设定来决定返回的url，如果cdnDomain未设置，则使用endpoint来生成url，否则使用cdn
+        'ssl'               => env('ALIOSS_SSL', false), // true to use 'https://' and false to use 'http://'. default is false,
+        'isCName'           => env('ALIOSS_CNAME', false), // 是否使用自定义域名,true: 则Storage.url()会使用自定义的cdn或域名生成文件url， false: 则使用外部节点生成url
+        'debug'             => env('ALIOSS_DEBUG', true),
     ],
     ...
 ]
 ```
-Then set the default driver in app/filesystems.php:
+
+Then set the default driver and oss config in `.env`:
+
 ```php
-'default' => 'oss',
+FILESYSTEM_DRIVER=oss
+
+ALIOSS_KEYID=<Your Aliyun OSS AccessKeyId>
+ALIOSS_KEYSECRET=<Your Aliyun OSS AccessKeySecret>
+ALIOSS_BUCKETNAME=<OSS bucket name>
+ALIOSS_ENDPOINT=<the endpoint of OSS, E.g: oss-cn-hangzhou.aliyuncs.com | custom domain, E.g:img.abc.com>
+ALIOSS_ENDPOINT_INTERNAL=<<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com>>
+ALIOSS_DOMAIN=<<CDN domain, cdn域名>
+ALIOSS_SSL=<true|false>
+ALIOSS_CNAME=<true|false>
+ALIOSS_DEBUG=<true|false>
 ```
+
 Ok, well! You are finish to configure. Just feel free to use Aliyun OSS like Storage!
 
 ## Usage
-See [Larave doc for Storage](https://laravel.com/docs/5.2/filesystem#custom-filesystems)
+
+See [Larave doc for Storage](https://laravel.com/docs/5.5/filesystem#custom-filesystems)
 Or you can learn here:
 
 > First you must use Storage facade
 
 ```php
 use Illuminate\Support\Facades\Storage;
-```    
+```
+
 > Then You can use all APIs of laravel Storage
 
 ```php
@@ -99,6 +122,9 @@ Storage::url('path/to/img.jpg') // get the file url
 ```
 
 ## Documentation
+
 More development detail see [Aliyun OSS DOC](https://help.aliyun.com/document_detail/32099.html?spm=5176.doc31981.6.335.eqQ9dM)
+
 ## License
+
 Source code is release under MIT license. Read LICENSE file for more information.
