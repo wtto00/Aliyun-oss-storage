@@ -3,12 +3,11 @@
  * @Author: wtto
  * @Date: 2020-03-06 09:58:01
  * @LastEditors: wtto
- * @LastEditTime: 2020-03-06 16:28:08
+ * @LastEditTime: 2020-03-06 17:08:13
  * @FilePath: \Aliyun-oss-storage\src\Plugins\SignUrl.php
  */
 namespace Wtto\AliOSS\Plugins;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use League\Flysystem\Plugin\AbstractPlugin;
 use OSS\OssClient;
 
@@ -29,7 +28,7 @@ class SignUrl extends AbstractPlugin
     {
         $adapter = $this->filesystem->getAdapter();
         if (!$adapter->has($path)) {
-            throw new FileNotFoundException($path . ' not found');
+            return $adapter->fileNotFound($path);
         }
         $client = $adapter->getClient();
         $acl = $client->getObjectAcl($adapter->getBucket(), $path);

@@ -3,7 +3,7 @@
  * @Author: jacob
  * @Date: 2020-03-06 11:34:00
  * @LastEditors: wtto
- * @LastEditTime: 2020-03-06 15:46:21
+ * @LastEditTime: 2020-03-06 17:07:38
  * @FilePath: \Aliyun-oss-storage\src\AliOssAdapter.php
  */
 
@@ -17,7 +17,6 @@ use League\Flysystem\Util;
 use Log;
 use OSS\Core\OssException;
 use OSS\OssClient;
-use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class AliOssAdapter extends AbstractAdapter
 {
@@ -580,14 +579,13 @@ class AliOssAdapter extends AbstractAdapter
 
     /**
      * @param $path
-     * @param number $expire_time seconds
      *
      * @return string
      */
-    public function getUrl($path, $expire_time = 3600)
+    public function getUrl($path)
     {
         if (!$this->has($path)) {
-            throw new FileNotFoundException($filePath . ' not found');
+            return $this->fileNotFound($path);
         }
 
         return $this->replaceHttps('http://' .
@@ -701,5 +699,19 @@ class AliOssAdapter extends AbstractAdapter
             Log::error($fun . ": FAILED");
             Log::error($e->getMessage());
         }
+    }
+
+    /**
+     * File not found, Log error
+     * don't throw new Illuminate\Contracts\Filesystem\FileNotFoundException
+     *
+     * @param string $path
+     * @return void
+     */
+    public function fileNotFound($path)
+    {
+        Log::error('aliyun-oss:' . $path . ' not found');
+        return $this->replaceHttps('http://' .
+            ($this->isCname ? ($this->cdnDomain == '' ? $this->endPoint : $this->cdnDomain) : $this->bucket . '.' . $this->endPoint) . '/' . ltrim($path, '/'));
     }
 }
