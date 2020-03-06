@@ -3,7 +3,7 @@
  * @Author: jacob
  * @Date: 2020-03-06 11:34:00
  * @LastEditors: wtto
- * @LastEditTime: 2020-03-06 15:45:15
+ * @LastEditTime: 2020-03-06 16:18:12
  * @FilePath: \Aliyun-oss-storage\src\AliOssServiceProvider.php
  */
 
@@ -12,10 +12,11 @@ namespace Wtto\AliOSS;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
-use Wtto\AliOSS\Plugins\PutFile;
-use Wtto\AliOSS\Plugins\PutRemoteFile;
 use League\Flysystem\Filesystem;
 use OSS\OssClient;
+use Wtto\AliOSS\Plugins\PutFile;
+use Wtto\AliOSS\Plugins\PutRemoteFile;
+use Wtto\AliOSS\Plugins\SignUrl;
 
 class AliOssServiceProvider extends ServiceProvider
 {
