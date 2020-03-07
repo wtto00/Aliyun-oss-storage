@@ -441,6 +441,9 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function has($path)
     {
+        if (empty($path)) {
+            return false;
+        }
         $object = $this->applyPathPrefix($path);
 
         return $this->client->doesObjectExist($this->bucket, $object);
