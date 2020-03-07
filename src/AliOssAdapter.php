@@ -385,7 +385,9 @@ class AliOssAdapter extends AbstractAdapter
                     $result['prefix'][] = $prefixInfo->getPrefix();
                 }
             } else {
-                $result['prefix'] = [];
+                $result['prefix'] = [
+                    'Prefix' => $prefixInfo->getPrefix(),
+                ];
             }
 
             //递归查询子目录所有文件
@@ -496,8 +498,8 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function listContents($directory = '', $recursive = false)
     {
-        $dirObjects = $this->listDirObjects($directory, true);
-        $contents = $dirObjects["objects"];
+        $dirObjects = $this->listDirObjects($directory, $recursive);
+        $contents = array_merge($dirObjects["objects"], $dirObjects['prefix']);
 
         $result = array_map([$this, 'normalizeResponse'], $contents);
         $result = array_filter($result, function ($value) {
