@@ -3,7 +3,7 @@
  * @Author: jacob
  * @Date: 2020-03-06 11:34:00
  * @LastEditors: wtto
- * @LastEditTime: 2020-03-08 11:24:18
+ * @LastEditTime: 2020-03-08 13:06:00
  * @FilePath: \Aliyun-oss-storage\src\AliOssAdapter.php
  */
 
@@ -162,6 +162,19 @@ class AliOssAdapter extends AbstractAdapter
     }
 
     /**
+     * 获取路径的目录
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    public function getDirName($path)
+    {
+        $path = rtrim($path, '/');
+        return substr($path, 0, strripos($path, '/'));
+    }
+
+    /**
      * Write a new file.
      *
      * @param string $path
@@ -173,6 +186,7 @@ class AliOssAdapter extends AbstractAdapter
     public function write($path, $contents, Config $config)
     {
         $object = $this->applyPathPrefix($path);
+        $this->createDir($this->getDirName($object), $config);
         $options = $this->getOptions($this->options, $config);
 
         if (!isset($options[OssClient::OSS_LENGTH])) {
@@ -181,6 +195,7 @@ class AliOssAdapter extends AbstractAdapter
         if (!isset($options[OssClient::OSS_CONTENT_TYPE])) {
             $options[OssClient::OSS_CONTENT_TYPE] = Util::guessMimeType($path, $contents);
         }
+
         try {
             $this->client->putObject($this->bucket, $object, $contents, $options);
         } catch (OssException $e) {
@@ -427,11 +442,21 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function createDir($dirname, Config $config)
     {
-        $object = $this->applyDirPath($dirname);
+        $object = $this->applyPathPrefix($dirname);
+        // 如果多层目录一起创建 则获取目录属性时，会报错
+        $objectArr = explode('/', $object);
         $options = $this->getOptionsFromConfig($config);
 
         try {
-            $this->client->createObjectDir($this->bucket, $object, $options);
+            $path = '';
+            $separator = '';
+            foreach ($objectArr as $dir) {
+                $path .= $separator . $dir;
+                if (!empty($dir)) {
+                    $this->client->createObjectDir($this->bucket, $path, $options);
+                }
+                $separator = '/';
+            }
         } catch (OssException $e) {
             $this->logErr(__FUNCTION__, $e);
             return false;
