@@ -3,7 +3,7 @@
  * @Author: jacob
  * @Date: 2020-03-06 11:34:00
  * @LastEditors: wtto
- * @LastEditTime: 2020-03-08 13:06:00
+ * @LastEditTime: 2020-03-08 22:11:54
  * @FilePath: \Aliyun-oss-storage\src\AliOssAdapter.php
  */
 
@@ -647,6 +647,26 @@ class AliOssAdapter extends AbstractAdapter
         return $this->replaceHttps('http://' .
             ($this->isCname ? ($this->cdnDomain == '' ? $this->endPoint : $this->cdnDomain) : $this->bucket . '.' . $this->endPoint) . '/' . ltrim($path, '/'));
 
+    }
+
+    /**
+     * 通过url获得path
+     *
+     * @param string $url
+     *
+     * @return string
+     */
+    public function url2path($url)
+    {
+        if (empty($url)) {
+            return $url;
+        }
+        $host = $this->isCname ? ($this->cdnDomain == '' ? $this->endPoint : $this->cdnDomain) : $this->bucket . '.' . $this->endPoint;
+        $index = strpos($url, $host);
+        if ($index === false) {
+            return $url;
+        }
+        return substr($url, $index + strlen($host) + 1);
     }
 
     /**
