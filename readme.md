@@ -124,6 +124,8 @@ Storage::signUrl('path/to/img.jpg',$timeout); // get the file url with signature
 // new function for v2.3.0
 Storage::objects($directory); // Get all of the directories and files within a given directory
 Storage::allObjects($directory); // Get all (recursive) of the directories and files within a given directory
+// new function for v2.3.1
+Storage::url2path($url); // Get path from url
 ```
 
 ## Documentation
