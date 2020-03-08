@@ -3,7 +3,7 @@
  * @Author: jacob
  * @Date: 2020-03-06 11:34:00
  * @LastEditors: wtto
- * @LastEditTime: 2020-03-06 17:07:38
+ * @LastEditTime: 2020-03-08 11:24:18
  * @FilePath: \Aliyun-oss-storage\src\AliOssAdapter.php
  */
 
@@ -147,6 +147,18 @@ class AliOssAdapter extends AbstractAdapter
         }
 
         return $url;
+    }
+
+    /**
+     * 目录路径后缀补全 /
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    public function applyDirPath($path)
+    {
+        return rtrim($this->applyPathPrefix($path), '/') . '/';
     }
 
     /**
@@ -299,7 +311,7 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function deleteDir($dirname)
     {
-        $dirname = rtrim($this->applyPathPrefix($dirname), '/') . '/';
+        $dirname = $this->applyDirPath($dirname);
         $dirObjects = $this->listDirObjects($dirname, true);
 
         if (count($dirObjects['objects']) > 0) {
@@ -336,12 +348,16 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function listDirObjects($dirname = '', $recursive = false)
     {
+        $dirname = $this->applyPathPrefix($this->applyDirPath($dirname));
         $delimiter = '/';
         $nextMarker = '';
         $maxkeys = 1000;
 
         //存储结果
-        $result = [];
+        $result = [
+            'objects' => [],
+            'prefix' => [],
+        ];
 
         while (true) {
             $options = [
@@ -365,7 +381,10 @@ class AliOssAdapter extends AbstractAdapter
 
             if (!empty($objectList)) {
                 foreach ($objectList as $objectInfo) {
-
+                    if ($objectInfo->getKey() == $dirname) {
+                        // 目录本身不要列出
+                        continue;
+                    }
                     $object['Prefix'] = $dirname;
                     $object['Key'] = $objectInfo->getKey();
                     $object['LastModified'] = $objectInfo->getLastModified();
@@ -376,18 +395,14 @@ class AliOssAdapter extends AbstractAdapter
 
                     $result['objects'][] = $object;
                 }
-            } else {
-                $result["objects"] = [];
             }
 
             if (!empty($prefixList)) {
                 foreach ($prefixList as $prefixInfo) {
-                    $result['prefix'][] = $prefixInfo->getPrefix();
+                    $result['prefix'][] = [
+                        'Prefix' => $prefixInfo->getPrefix(),
+                    ];
                 }
-            } else {
-                $result['prefix'] = [
-                    'Prefix' => $prefixInfo->getPrefix(),
-                ];
             }
 
             //递归查询子目录所有文件
@@ -412,7 +427,7 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function createDir($dirname, Config $config)
     {
-        $object = $this->applyPathPrefix($dirname);
+        $object = $this->applyDirPath($dirname);
         $options = $this->getOptionsFromConfig($config);
 
         try {
@@ -448,7 +463,12 @@ class AliOssAdapter extends AbstractAdapter
         }
         $object = $this->applyPathPrefix($path);
 
-        return $this->client->doesObjectExist($this->bucket, $object);
+        if ($this->client->doesObjectExist($this->bucket, $object)) {
+            return true;
+        }
+
+        // file or directory exist
+        return $this->client->doesObjectExist($this->bucket, $object . '/');
     }
 
     /**
@@ -499,7 +519,7 @@ class AliOssAdapter extends AbstractAdapter
     public function listContents($directory = '', $recursive = false)
     {
         $dirObjects = $this->listDirObjects($directory, $recursive);
-        $contents = array_merge($dirObjects["objects"], $dirObjects['prefix']);
+        $contents = array_merge($dirObjects['prefix'], $dirObjects["objects"]);
 
         $result = array_map([$this, 'normalizeResponse'], $contents);
         $result = array_filter($result, function ($value) {
@@ -520,7 +540,13 @@ class AliOssAdapter extends AbstractAdapter
             $objectMeta = $this->client->getObjectMeta($this->bucket, $object);
         } catch (OssException $e) {
             $this->logErr(__FUNCTION__, $e);
-            return false;
+            try {
+                // as a directory, if exist?
+                $objectMeta = $this->client->getObjectMeta($this->bucket, $object . '/');
+            } catch (OssException $e) {
+                $this->logErr(__FUNCTION__, $e);
+                return false;
+            }
         }
 
         return $objectMeta;
@@ -624,6 +650,7 @@ class AliOssAdapter extends AbstractAdapter
     {
         $result = ['path' => $path ?: $this->removePathPrefix(isset($object['Key']) ? $object['Key'] : $object['Prefix'])];
         $result['dirname'] = Util::dirname($result['path']);
+        $result['name'] = rtrim(substr($result['path'], (strlen($result['dirname']) ?: -1) + 1), '\\/');
 
         if (isset($object['LastModified'])) {
             $result['timestamp'] = strtotime($object['LastModified']);

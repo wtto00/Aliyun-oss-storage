@@ -75,13 +75,13 @@ Ok, well! You are finish to configure. Just feel free to use Aliyun OSS like Sto
 See [Larave doc for Storage](https://laravel.com/docs/5.5/filesystem#custom-filesystems)
 Or you can learn here:
 
-> First you must use Storage facade
+1. First you must use Storage facade
 
 ```php
 use Illuminate\Support\Facades\Storage;
 ```
 
-> Then You can use all APIs of laravel Storage
+2. Then You can use all APIs of laravel Storage
 
 ```php
 Storage::disk('oss'); // if default filesystems driver is oss, you can skip this step
@@ -121,6 +121,9 @@ Storage::putRemoteFile('target/path/to/file/jacob.jpg', 'http://example.com/jaco
 Storage::url('path/to/img.jpg'); // get the file url
 // new function for v2.1.1
 Storage::signUrl('path/to/img.jpg',$timeout); // get the file url with signature,default timeout = 3600
+// new function for v2.3.0
+Storage::objects($directory); // Get all of the directories and files within a given directory
+Storage::allObjects($directory); // Get all (recursive) of the directories and files within a given directory
 ```
 
 ## Documentation
