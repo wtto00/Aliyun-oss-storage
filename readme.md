@@ -72,7 +72,9 @@ Aliyun oss filesystem storage adapter for laravel 5. You can use Aliyun OSS just
     ```
 
     > **注意：** 如果你的服务器和你的 OSS Bucket 不在同一个区域的话，请务必不要配置 ALIOSS_ENDPOINT_INTERNAL。
+    >
     > 如果配置了 ALIOSS_ENDPOINT_INTERNAL，那么传输将使用阿里云内网，无论是否配置 ALIOSS_CNAME 和 ALIOSS_DOMAIN。
+    >
     > **传输优先级：** ALIOSS_ENDPOINT_INTERNAL > ALIOSS_CNAME=true && ALIOSS_DOMAIN > ALIOSS_ENDPOINT。
 
     好了，这些你就配置完成了。现在你可以像`Laravel Storage`一样使用 `Aliyun OSS` 了。
