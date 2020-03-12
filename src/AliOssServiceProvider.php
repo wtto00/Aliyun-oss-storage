@@ -42,7 +42,8 @@ class AliOssServiceProvider extends ServiceProvider
             $debug = empty($config['debug']) ? false : $config['debug'];
 
             $endPoint = $config['endpoint']; // 默认作为外部节点
-            $epInternal = $isCname ? $cdnDomain : (empty($config['endpoint_internal']) ? $endPoint : $config['endpoint_internal']); // 内部节点
+            // $epInternal = $isCname ? $cdnDomain : (empty($config['endpoint_internal']) ? $endPoint : $config['endpoint_internal']); // 内部节点
+            $epInternal = $config['endpoint_internal'] ?: ($isCname ? $cdnDomain : $endPoint);
 
             if ($debug) {
                 Log::debug('OSS config:', $config);
