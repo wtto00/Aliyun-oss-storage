@@ -34,44 +34,48 @@ Aliyun oss filesystem storage adapter for laravel 5. You can use Aliyun OSS just
 
 ## 配置
 
-1. 添加下边的代码到配置文件`app/filesystems.php`中：
+1.  添加下边的代码到配置文件`app/filesystems.php`中：
 
-   ```php
-   'disks'=>[
-       ...
-       'oss' => [
-           'driver'            => 'oss',
-           'access_id'         => env('ALIOSS_KEYID', null), //Your Aliyun OSS AccessKeyId
-           'access_key'        => env('ALIOSS_KEYSECRET', null), //Your Aliyun OSS AccessKeySecret
-           'bucket'            => env('ALIOSS_BUCKETNAME', null), //OSS bucket name
-           'endpoint'          => env('ALIOSS_ENDPOINT', null), //<the endpoint of OSS, E.g: oss-cn-hangzhou.aliyuncs.com | custom domain, E.g:img.abc.com> OSS 外网节点或自定义外部域名
-           'endpoint_internal' => env('ALIOSS_ENDPOINT_INTERNAL', null), //<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com> v2.0.4 新增配置属性，如果为空，则默认使用 endpoint 配置(由于内网上传有点小问题未解决，请大家暂时不要使用内网节点上传，正在与阿里技术沟通中)
-           'cdnDomain'         => env('ALIOSS_DOMAIN', null), //<CDN domain, cdn域名> 如果isCName为true, getUrl会判断cdnDomain是否设定来决定返回的url，如果cdnDomain未设置，则使用endpoint来生成url，否则使用cdn
-           'ssl'               => env('ALIOSS_SSL', false), // true to use 'https://' and false to use 'http://'. default is false,
-           'isCName'           => env('ALIOSS_CNAME', false), // 是否使用自定义域名,true: 则Storage.url()会使用自定义的cdn或域名生成文件url， false: 则使用外部节点生成url
-           'debug'             => env('ALIOSS_DEBUG', true),
-       ],
-       ...
-   ]
-   ```
+    ```php
+    'disks'=>[
+        ...
+        'oss' => [
+            'driver'            => 'oss',
+            'access_id'         => env('ALIOSS_KEYID', null), //Your Aliyun OSS AccessKeyId
+            'access_key'        => env('ALIOSS_KEYSECRET', null), //Your Aliyun OSS AccessKeySecret
+            'bucket'            => env('ALIOSS_BUCKETNAME', null), //OSS bucket name
+            'endpoint'          => env('ALIOSS_ENDPOINT', null), //<the endpoint of OSS, E.g: oss-cn-hangzhou.aliyuncs.com | custom domain, E.g:img.abc.com> OSS 外网节点或自定义外部域名
+            'endpoint_internal' => env('ALIOSS_ENDPOINT_INTERNAL', null), //<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com> v2.0.4 新增配置属性，如果为空，则默认使用 endpoint 配置(由于内网上传有点小问题未解决，请大家暂时不要使用内网节点上传，正在与阿里技术沟通中)
+            'cdnDomain'         => env('ALIOSS_DOMAIN', null), //<CDN domain, cdn域名> 如果isCName为true, getUrl会判断cdnDomain是否设定来决定返回的url，如果cdnDomain未设置，则使用endpoint来生成url，否则使用cdn
+            'ssl'               => env('ALIOSS_SSL', false), // true to use 'https://' and false to use 'http://'. default is false,
+            'isCName'           => env('ALIOSS_CNAME', false), // 是否使用自定义域名,true: 则Storage.url()会使用自定义的cdn或域名生成文件url， false: 则使用外部节点生成url
+            'debug'             => env('ALIOSS_DEBUG', true),
+        ],
+        ...
+    ]
+    ```
 
-2. 然后在文件 `.env` 中配置你的相关信息：
+2.  然后在文件 `.env` 中配置你的相关信息：
 
-```php
-FILESYSTEM_DRIVER=oss
+    ```php
+    FILESYSTEM_DRIVER=oss
 
-ALIOSS_KEYID=<Your Aliyun OSS AccessKeyId>
-ALIOSS_KEYSECRET=<Your Aliyun OSS AccessKeySecret>
-ALIOSS_BUCKETNAME=<OSS bucket name>
-ALIOSS_ENDPOINT=<the endpoint of OSS, E.g: oss-cn-hangzhou.aliyuncs.com | custom domain, E.g:img.abc.com>
-ALIOSS_ENDPOINT_INTERNAL=<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com>
-ALIOSS_DOMAIN=<CDN domain, cdn域名>
-ALIOSS_SSL=<true|false>
-ALIOSS_CNAME=<true|false>
-ALIOSS_DEBUG=<true|false>
-```
+    ALIOSS_KEYID=<Your Aliyun OSS AccessKeyId>
+    ALIOSS_KEYSECRET=<Your Aliyun OSS AccessKeySecret>
+    ALIOSS_BUCKETNAME=<OSS bucket name>
+    ALIOSS_ENDPOINT=<the endpoint of OSS, E.g: oss-cn-hangzhou.aliyuncs.com | custom domain, E.g:img.abc.com>
+    ALIOSS_ENDPOINT_INTERNAL=<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com>
+    ALIOSS_DOMAIN=<CDN domain, cdn域名>
+    ALIOSS_SSL=<true|false>
+    ALIOSS_CNAME=<true|false>
+    ALIOSS_DEBUG=<true|false>
+    ```
 
-好了，这些你就配置完成了。现在你可以像`Laravel Storage`一样使用 `Aliyun OSS` 了。
+    > **注意：** 如果你的服务器和你的 OSS Bucket 不在同一个区域的话，请务必不要配置 ALIOSS_ENDPOINT_INTERNAL。
+    > 如果配置了 ALIOSS_ENDPOINT_INTERNAL，那么传输将使用阿里云内网，无论是否配置 ALIOSS_CNAME 和 ALIOSS_DOMAIN。
+    > **传输优先级：** ALIOSS_ENDPOINT_INTERNAL > ALIOSS_CNAME=true && ALIOSS_DOMAIN > ALIOSS_ENDPOINT。
+
+    好了，这些你就配置完成了。现在你可以像`Laravel Storage`一样使用 `Aliyun OSS` 了。
 
 ## 使用
 

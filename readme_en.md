@@ -70,6 +70,10 @@ ALIOSS_CNAME=<true|false>
 ALIOSS_DEBUG=<true|false>
 ```
 
+> **Notice:** If your server and your OSS bucket are not in the same region, please do not configure _ALIOSS_ENDPOINT_INTERNAL_.
+> If _ALIOSS_ENDPOINT_INTERNAL_ is configured, Alibaba cloud intranet will be used for transmission, regardless of whether _ALIOSS_CNAME_ and _ALIOSS_DOMAIN_ are configured.
+> **Transmission priority:** _ALIOSS_ENDPOINT_INTERNAL_ > _ALIOSS_CNAME_=true && _ALIOSS_DOMAIN_ > _ALIOSS_ENDPOINT_.
+
 Ok, well! You are finish to configure. Just feel free to use Aliyun OSS like Storage!
 
 ## Usage
