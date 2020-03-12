@@ -1,58 +1,61 @@
 # Aliyun-oss-storage for Laravel 5+
 
+[English Document](./readme_en.md)
+
 本仓库 Fork 自[jacobcyl/Aliyun-oss-storage](https://github.com/jacobcyl/Aliyun-oss-storage)
 由于作者长时间不更新，所以自己稍微修改下，重新发布。
 
 Aliyun oss filesystem storage adapter for laravel 5. You can use Aliyun OSS just like laravel Storage as usual.  
 借鉴了一些优秀的代码，综合各方，同时做了更多优化，将会添加更多完善的接口和插件，打造 Laravel 最好的 OSS Storage 扩展
 
-## Inspired By
+## 借鉴
 
 - [thephpleague/flysystem-aws-s3-v2](https://github.com/thephpleague/flysystem-aws-s3-v2)
 - [apollopy/flysystem-aliyun-oss](https://github.com/apollopy/flysystem-aliyun-oss)
 
-## Require
+## 依赖
 
 - Laravel 5+
-- cURL extension
+- `cURL` PHP 扩展
 
-##Installation
-In order to install AliOSS-storage, you can simply run below command:
+## 安装
 
-```bash
-composer require wtto/ali-oss-storage
-```
+1. 首先运行下面命令来给你的`Laravel`项目安装依赖：
 
-Then in your `config/app.php` add this line to providers array:
+   ```bash
+   composer require wtto/ali-oss-storage
+   ```
 
-```php
-Wtto\AliOSS\AliOssServiceProvider::class,
-```
+2. 然后你需要在配置文件`config/app.php`中，添加下边的代码来引用依赖：
 
-## Configuration
+   ```php
+   Wtto\AliOSS\AliOssServiceProvider::class,
+   ```
 
-Add the following in `app/filesystems.php`:
+## 配置
 
-```php
-'disks'=>[
-    ...
-    'oss' => [
-        'driver'            => 'oss',
-        'access_id'         => env('ALIOSS_KEYID', null), //Your Aliyun OSS AccessKeyId
-        'access_key'        => env('ALIOSS_KEYSECRET', null), //Your Aliyun OSS AccessKeySecret
-        'bucket'            => env('ALIOSS_BUCKETNAME', null), //OSS bucket name
-        'endpoint'          => env('ALIOSS_ENDPOINT', null), //<the endpoint of OSS, E.g: oss-cn-hangzhou.aliyuncs.com | custom domain, E.g:img.abc.com> OSS 外网节点或自定义外部域名
-        'endpoint_internal' => env('ALIOSS_ENDPOINT_INTERNAL', null), //<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com> v2.0.4 新增配置属性，如果为空，则默认使用 endpoint 配置(由于内网上传有点小问题未解决，请大家暂时不要使用内网节点上传，正在与阿里技术沟通中)
-        'cdnDomain'         => env('ALIOSS_DOMAIN', null), //<CDN domain, cdn域名> 如果isCName为true, getUrl会判断cdnDomain是否设定来决定返回的url，如果cdnDomain未设置，则使用endpoint来生成url，否则使用cdn
-        'ssl'               => env('ALIOSS_SSL', false), // true to use 'https://' and false to use 'http://'. default is false,
-        'isCName'           => env('ALIOSS_CNAME', false), // 是否使用自定义域名,true: 则Storage.url()会使用自定义的cdn或域名生成文件url， false: 则使用外部节点生成url
-        'debug'             => env('ALIOSS_DEBUG', true),
-    ],
-    ...
-]
-```
+1. 添加下边的代码到配置文件`app/filesystems.php`中：
 
-Then set the default driver and oss config in `.env`:
+   ```php
+   'disks'=>[
+       ...
+       'oss' => [
+           'driver'            => 'oss',
+           'access_id'         => env('ALIOSS_KEYID', null), //Your Aliyun OSS AccessKeyId
+           'access_key'        => env('ALIOSS_KEYSECRET', null), //Your Aliyun OSS AccessKeySecret
+           'bucket'            => env('ALIOSS_BUCKETNAME', null), //OSS bucket name
+           'endpoint'          => env('ALIOSS_ENDPOINT', null), //<the endpoint of OSS, E.g: oss-cn-hangzhou.aliyuncs.com | custom domain, E.g:img.abc.com> OSS 外网节点或自定义外部域名
+           'endpoint_internal' => env('ALIOSS_ENDPOINT_INTERNAL', null), //<internal endpoint [OSS内网节点] 如：oss-cn-shenzhen-internal.aliyuncs.com> v2.0.4 新增配置属性，如果为空，则默认使用 endpoint 配置(由于内网上传有点小问题未解决，请大家暂时不要使用内网节点上传，正在与阿里技术沟通中)
+           'cdnDomain'         => env('ALIOSS_DOMAIN', null), //<CDN domain, cdn域名> 如果isCName为true, getUrl会判断cdnDomain是否设定来决定返回的url，如果cdnDomain未设置，则使用endpoint来生成url，否则使用cdn
+           'ssl'               => env('ALIOSS_SSL', false), // true to use 'https://' and false to use 'http://'. default is false,
+           'isCName'           => env('ALIOSS_CNAME', false), // 是否使用自定义域名,true: 则Storage.url()会使用自定义的cdn或域名生成文件url， false: 则使用外部节点生成url
+           'debug'             => env('ALIOSS_DEBUG', true),
+       ],
+       ...
+   ]
+   ```
+
+2. 然后在文件 `.env` 中配置你的相关信息：
 
 ```php
 FILESYSTEM_DRIVER=oss
@@ -68,70 +71,94 @@ ALIOSS_CNAME=<true|false>
 ALIOSS_DEBUG=<true|false>
 ```
 
-Ok, well! You are finish to configure. Just feel free to use Aliyun OSS like Storage!
+好了，这些你就配置完成了。现在你可以像`Laravel Storage`一样使用 `Aliyun OSS` 了。
 
-## Usage
+## 使用
 
-See [Larave doc for Storage](https://laravel.com/docs/5.5/filesystem#custom-filesystems)
-Or you can learn here:
+查看 [Larave doc for Storage](https://laravel.com/docs/5.5/filesystem#custom-filesystems)， 或者你可以按照下边的方式使用：
 
-1. First you must use Storage facade
+1. 首先在文件开始位置引用`Laravel Storage`
 
-```php
-use Illuminate\Support\Facades\Storage;
-```
+   ```php
+   use Illuminate\Support\Facades\Storage;
+   ```
 
-2. Then You can use all APIs of laravel Storage
+2. 然后你就可以使用`Laravel Storage`的`API`了
 
-```php
-Storage::disk('oss'); // if default filesystems driver is oss, you can skip this step
+   ```php
+   // 如果你设置的默认文件驱动时oss的话，这一步可以跳过
+   Storage::disk('oss');
 
-//fetch all files of specified bucket(see upond configuration)
-Storage::files($directory);
-Storage::allFiles($directory);
+   // 获取目录下所有的文件
+   Storage::files($directory);
+   // 递归获取目录下所有的文件
+   Storage::allFiles($directory);
 
-Storage::put('path/to/file/file.jpg', $contents); //first parameter is the target file path, second paramter is file content
-Storage::putFile('path/to/file/file.jpg', 'local/path/to/local_file.jpg'); // upload file from local path
+   // 上传文件 第一个参数是储存位置，第二个参数是文件内容
+   Storage::put('path/to/file/file.jpg', $contents);
+   // 上传指定本地文件到指定位置
+   Storage::putFile('path/to/file/file.jpg', 'local/path/to/local_file.jpg');
 
-Storage::get('path/to/file/file.jpg'); // get the file object by path
-Storage::exists('path/to/file/file.jpg'); // determine if a given file exists on the storage(OSS)
-Storage::size('path/to/file/file.jpg'); // get the file size (Byte)
-Storage::lastModified('path/to/file/file.jpg'); // get date of last modification
+   // 获得指定文件的内容
+   Storage::get('path/to/file/file.jpg');
+   // 判断指定对象是否存在
+   Storage::exists('path/to/file/file.jpg');
+   // 获得指定对象的大小
+   Storage::size('path/to/file/file.jpg');、
+   // 获得指定对象的最后修改时间
+   Storage::lastModified('path/to/file/file.jpg');
 
-Storage::directories($directory); // Get all of the directories within a given directory
-Storage::allDirectories($directory); // Get all (recursive) of the directories within a given directory
+   // 获得指定位置下的所有目录
+   Storage::directories($directory);
+   // 递归获得指定位置下的所有目录
+   Storage::allDirectories($directory);
 
-Storage::copy('old/file1.jpg', 'new/file1.jpg');
-Storage::move('old/file1.jpg', 'new/file1.jpg');
-Storage::rename('path/to/file1.jpg', 'path/to/file2.jpg');
+   // 复制指定对象到指定位置
+   Storage::copy('old/file1.jpg', 'new/file1.jpg');
+   // 移动指定对象到指定位置
+   Storage::move('old/file1.jpg', 'new/file1.jpg');
+   // 重命名指定对象
+   Storage::rename('path/to/file1.jpg', 'path/to/file2.jpg');
 
-Storage::prepend('file.log', 'Prepended Text'); // Prepend to a file.
-Storage::append('file.log', 'Appended Text'); // Append to a file.
+   // 向指定文件中追加前置内容
+   Storage::prepend('file.log', 'Prepended Text');
+   // 向指定文件中追加内容
+   Storage::append('file.log', 'Appended Text');
 
-Storage::delete('file.jpg');
-Storage::delete(['file1.jpg', 'file2.jpg']);
+   // 删除指定对象
+   Storage::delete('file.jpg');
+   // 删除多个指定对象
+   Storage::delete(['file1.jpg', 'file2.jpg']);
 
-Storage::makeDirectory($directory); // Create a directory.
-Storage::deleteDirectory($directory); // Recursively delete a directory.It will delete all files within a given directory, SO Use with caution please.
+   // 创建指定目录
+   Storage::makeDirectory($directory);
+   // 删除指定目录 目录中的所有文件同样会被删除 请慎重使用
+   Storage::deleteDirectory($directory);
 
-// upgrade logs
-// new plugin for v2.0 version
-Storage::putRemoteFile('target/path/to/file/jacob.jpg', 'http://example.com/jacob.jpg'); //upload remote file to storage by remote url
-// new function for v2.0.1 version
-Storage::url('path/to/img.jpg'); // get the file url
-// new function for v2.1.1
-Storage::signUrl('path/to/img.jpg',$timeout); // get the file url with signature,default timeout = 3600
-// new function for v2.3.0
-Storage::objects($directory); // Get all of the directories and files within a given directory
-Storage::allObjects($directory); // Get all (recursive) of the directories and files within a given directory
-// new function for v2.3.1
-Storage::url2path($url); // Get path from url
-```
+   // 更新新添加函数
+   // v2.0 添加插件：
+   // 上传远程文件到指定位置
+   Storage::putRemoteFile('target/path/to/file/jacob.jpg', 'http://example.com/jacob.jpg');
+   // v2.0.1 添加插件：
+   // 获得指定文件的网址
+   Storage::url('path/to/img.jpg'); // get the file url
+   // v2.1.1 添加插件：
+   // 获得私有 Bucket 的指定文件的临时公开网址 默认临时公开失效是 3600 秒
+   Storage::signUrl('path/to/img.jpg',$timeout);
+   // v2.3.0 添加插件：
+   // 获得指定位置的所有对象 包括目录以及文件 文件会放回相关属性
+   Storage::objects($directory);
+   // 递归获得指定位置的所有对象 包括目录以及文件 文件会放回相关属性
+   Storage::allObjects($directory);
+   // v2.3.1 添加插件：
+   // 通过url获得文件所在位置
+   Storage::url2path($url);
+   ```
 
-## Documentation
+## 文档
 
-More development detail see [Aliyun OSS DOC](https://help.aliyun.com/document_detail/32099.html?spm=5176.doc31981.6.335.eqQ9dM)
+更多开发文档请查看 [Aliyun OSS DOC](https://help.aliyun.com/document_detail/32099.html?spm=5176.doc31981.6.335.eqQ9dM)
 
-## License
+## 许可
 
-Source code is release under MIT license. Read LICENSE file for more information.
+源代码是根据 MIT 许可证发布的。有关详细信息，请阅读许可证文件。
