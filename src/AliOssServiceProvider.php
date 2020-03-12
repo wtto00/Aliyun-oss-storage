@@ -49,7 +49,7 @@ class AliOssServiceProvider extends ServiceProvider
                 Log::debug('OSS config:', $config);
             }
 
-            $client = new OssClient($accessId, $accessKey, $epInternal, $isCname);
+            $client = new OssClient($accessId, $accessKey, $epInternal, $config['endpoint_internal'] ? false : $isCname);
             $adapter = new AliOssAdapter($client, $bucket, $endPoint, $ssl, $isCname, $debug, $cdnDomain);
 
             //Log::debug($client);
