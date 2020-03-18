@@ -34,6 +34,6 @@ class PutRemoteFile extends AbstractPlugin
         //Get file stream from remote url
         $resource = fopen($remoteUrl, 'r');
 
-        return (bool) $this->filesystem->getAdapter()->writeStream($path, $resource, $config);
+        return $this->filesystem->getAdapter()->writeStream($path, $resource, $config);
     }
 }
