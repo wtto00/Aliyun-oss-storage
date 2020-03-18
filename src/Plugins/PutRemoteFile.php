@@ -3,7 +3,7 @@
  * @Author: jacob
  * @Date: 2020-03-06 11:34:00
  * @LastEditors: wtto
- * @LastEditTime: 2020-03-06 15:43:32
+ * @LastEditTime: 2020-03-18 23:02:18
  * @FilePath: \Aliyun-oss-storage\src\Plugins\PutRemoteFile.php
  */
 
@@ -34,6 +34,6 @@ class PutRemoteFile extends AbstractPlugin
         //Get file stream from remote url
         $resource = fopen($remoteUrl, 'r');
 
-        return $this->filesystem->getAdapter()->writeStream($path, $resource, $config);
+        return (bool) $this->filesystem->getAdapter()->writeStream($path, $resource, $config);
     }
 }

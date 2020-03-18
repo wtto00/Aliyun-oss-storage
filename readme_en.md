@@ -1,6 +1,6 @@
 # Aliyun-oss-storage for Laravel 5+
 
-[中文文档](./readme.md)
+[简体中文](./readme.md) | English
 
 This repository fork from [jacobcyl/Aliyun-oss-storage](https://github.com/jacobcyl/Aliyun-oss-storage).
 Because the author didn't update for a long time, I modified it a little and republished it.
