@@ -1,11 +1,4 @@
 <?php
-/*
- * @Author: jacob
- * @Date: 2020-03-06 11:34:00
- * @LastEditors: wtto
- * @LastEditTime: 2020-03-08 21:56:07
- * @FilePath: \Aliyun-oss-storage\src\AliOssServiceProvider.php
- */
 
 namespace Wtto\AliOSS;
 
@@ -15,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Filesystem;
 use OSS\OssClient;
 use Wtto\AliOSS\Plugins\AllObjects;
+use Wtto\AliOSS\Plugins\CopyDir;
 use Wtto\AliOSS\Plugins\Objects;
 use Wtto\AliOSS\Plugins\Path;
 use Wtto\AliOSS\Plugins\PutFile;
@@ -61,6 +55,7 @@ class AliOssServiceProvider extends ServiceProvider
             $filesystem->addPlugin(new Objects());
             $filesystem->addPlugin(new AllObjects());
             $filesystem->addPlugin(new Path());
+            $filesystem->addPlugin(new CopyDir());
             return $filesystem;
         });
     }

@@ -304,6 +304,51 @@ class AliOssAdapter extends AbstractAdapter
     }
 
     /**
+     * Copy a directory from one location to another.
+     *
+     * @param  string  $directory
+     * @param  string  $destination
+     * @param  int     $options
+     * @return bool
+     */
+    public function copyDirectory($directory, $destination, $options = [])
+    {
+        if (!ends_with($directory, '/')) {
+            return false;
+        }
+
+        // If the destination directory does not actually exist, we will go ahead and
+        // create it recursively, which just gets the destination prepared to copy
+        // the files over. Once we make the directory we'll proceed the copying.
+        if (!$this->has($destination)) {
+            $config = new Config($options);
+            $bool = $this->createDir($destination, $config);
+            if (!$bool) {
+                return false;
+            }
+        }
+
+        $items = $this->listDirObjects($directory);
+
+        foreach ($items['objects'] as $item) {
+            $filename = substr($item['Key'], strlen($directory));
+            $bool = $this->copy($item['Key'], $destination . $filename);
+            if (!$bool) {
+                return false;
+            }
+        }
+        foreach ($items['prefix'] as $item) {
+            $dirname = substr($item['Prefix'], strlen($directory));
+            $bool = $this->copyDirectory($item['Prefix'], $destination . $dirname);
+            if (!$bool) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function delete($path)
