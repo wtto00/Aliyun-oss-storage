@@ -134,6 +134,8 @@ Or you can learn here:
    Storage::allObjects($directory); // Get all (recursive) of the directories and files within a given directory
    // new function for v2.3.1
    Storage::url2path($url); // Get path from url
+   // new function for v2.3.3
+   Storage::copyDir('path/from/','path/to/'); // Copy a directory
    ```
 
 ## Documentation
