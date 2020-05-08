@@ -533,12 +533,7 @@ class AliOssAdapter extends AbstractAdapter
         }
         $object = $this->applyPathPrefix($path);
 
-        if ($this->client->doesObjectExist($this->bucket, $object)) {
-            return true;
-        }
-
-        // file or directory exist
-        return $this->client->doesObjectExist($this->bucket, $object . '/');
+        return $this->client->doesObjectExist($this->bucket, $object);
     }
 
     /**
