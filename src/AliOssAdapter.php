@@ -183,7 +183,7 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function isDirectory($path)
     {
-        return ends_with($apth, '/');
+        return ends_with($path, '/');
     }
 
     /**
