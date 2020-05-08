@@ -175,6 +175,18 @@ class AliOssAdapter extends AbstractAdapter
     }
 
     /**
+     * 判断路径是否是一个目录
+     *
+     * @param string $path
+     *
+     * @return boolean
+     */
+    public function isDirectory($path)
+    {
+        return ends_with($apth, '/');
+    }
+
+    /**
      * Write a new file.
      *
      * @param string $path
@@ -279,7 +291,11 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function rename($path, $newpath)
     {
-        if (!$this->copy($path, $newpath)) {
+        if ($this->isDirectory($path)) {
+            if (!$this->copyDirectory($path, $newpath)) {
+                return false;
+            }
+        } elseif (!$this->copy($path, $newpath)) {
             return false;
         }
 
@@ -313,7 +329,7 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function copyDirectory($directory, $destination, $options = [])
     {
-        if (!ends_with($directory, '/')) {
+        if (!$this->isDirectory($directory)) {
             return false;
         }
 
