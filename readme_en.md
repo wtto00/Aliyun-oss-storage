@@ -135,7 +135,7 @@ Or you can learn here:
    // new function for v2.3.1
    Storage::url2path($url); // Get path from url
    // new function for v2.3.3
-   Storage::copyDir('path/from/','path/to/'); // Copy a directory
+   Storage::copyDirectory('path/from/','path/to/'); // Copy a directory
    ```
 
 ## Documentation

@@ -8,7 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Filesystem;
 use OSS\OssClient;
 use Wtto\AliOSS\Plugins\AllObjects;
-use Wtto\AliOSS\Plugins\CopyDir;
+use Wtto\AliOSS\Plugins\CopyDirectory;
 use Wtto\AliOSS\Plugins\Objects;
 use Wtto\AliOSS\Plugins\Path;
 use Wtto\AliOSS\Plugins\PutFile;
@@ -55,7 +55,7 @@ class AliOssServiceProvider extends ServiceProvider
             $filesystem->addPlugin(new Objects());
             $filesystem->addPlugin(new AllObjects());
             $filesystem->addPlugin(new Path());
-            $filesystem->addPlugin(new CopyDir());
+            $filesystem->addPlugin(new CopyDirectory());
             return $filesystem;
         });
     }

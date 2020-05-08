@@ -5,7 +5,7 @@ namespace Wtto\AliOSS\Plugins;
 use Illuminate\Filesystem\Filesystem;
 use League\Flysystem\Plugin\AbstractPlugin;
 
-class CopyDir extends AbstractPlugin
+class CopyDirectory extends AbstractPlugin
 {
 
     /**
@@ -15,7 +15,7 @@ class CopyDir extends AbstractPlugin
      */
     public function getMethod()
     {
-        return 'copyDir';
+        return 'copyDirectory';
     }
 
     public function handle($path, $newpath)

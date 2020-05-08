@@ -161,7 +161,7 @@ Aliyun oss filesystem storage adapter for laravel 5. You can use Aliyun OSS just
    Storage::url2path($url);
    // v2.3.3 添加插件
    // 复制目录
-   Storage::copyDir('path/from/','path/to/');
+   Storage::copyDirectory('path/from/','path/to/');
    ```
 
 ## 文档
