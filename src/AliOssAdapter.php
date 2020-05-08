@@ -291,15 +291,27 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function rename($path, $newpath)
     {
-        if ($this->isDirectory($path)) {
-            if (!$this->copyDirectory($path, $newpath)) {
-                return false;
-            }
-        } elseif (!$this->copy($path, $newpath)) {
+        if (!$this->copy($path, $newpath)) {
             return false;
         }
 
         return $this->delete($path);
+    }
+
+    /**
+     * 重命名目录
+     */
+    public function renameDirectory($path, $newpath)
+    {
+        if (!$this->isDirectory($path)) {
+            return false;
+        }
+
+        if (!$this->copyDirectory($path, $newpath)) {
+            return false;
+        }
+
+        return $this->deleteDir($path);
     }
 
     /**
@@ -365,6 +377,22 @@ class AliOssAdapter extends AbstractAdapter
     }
 
     /**
+     * Move a directory from one location to another.
+     *
+     * @param  string  $directory
+     * @param  string  $destination
+     * @param  int     $options
+     * @return bool
+     */
+    public function moveDirectory($directory, $destination, $options = [])
+    {
+        if (!$this->copyDirectory($directory, $destination, $options)) {
+            return false;
+        }
+        return $this->deleteDir($directory);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function delete($path)
@@ -391,7 +419,6 @@ class AliOssAdapter extends AbstractAdapter
         $dirObjects = $this->listDirObjects($dirname, true);
 
         if (count($dirObjects['objects']) > 0) {
-
             foreach ($dirObjects['objects'] as $object) {
                 $objects[] = $object['Key'];
             }
@@ -403,6 +430,17 @@ class AliOssAdapter extends AbstractAdapter
                 return false;
             }
 
+        }
+
+        // 添加目录之中的目录，也是要删除的
+        foreach ($dirObjects['prefix'] as $dir) {
+            $dirs[] = $dir['Prefix'];
+        }
+        try {
+            $this->client->deleteObjects($this->bucket, $dirs);
+        } catch (OssException $e) {
+            $this->logErr(__FUNCTION__, $e);
+            return false;
         }
 
         try {
@@ -484,8 +522,9 @@ class AliOssAdapter extends AbstractAdapter
             //递归查询子目录所有文件
             if ($recursive) {
                 foreach ($result['prefix'] as $pfix) {
-                    $next = $this->listDirObjects($pfix, $recursive);
+                    $next = $this->listDirObjects($pfix['Prefix'], $recursive);
                     $result["objects"] = array_merge($result['objects'], $next["objects"]);
+                    $result["prefix"] = array_merge($next["prefix"], $result['prefix']);
                 }
             }
 

@@ -9,10 +9,12 @@ use League\Flysystem\Filesystem;
 use OSS\OssClient;
 use Wtto\AliOSS\Plugins\AllObjects;
 use Wtto\AliOSS\Plugins\CopyDirectory;
+use Wtto\AliOSS\Plugins\MoveDirectory;
 use Wtto\AliOSS\Plugins\Objects;
 use Wtto\AliOSS\Plugins\Path;
 use Wtto\AliOSS\Plugins\PutFile;
 use Wtto\AliOSS\Plugins\PutRemoteFile;
+use Wtto\AliOSS\Plugins\RenameDirectory;
 use Wtto\AliOSS\Plugins\SignUrl;
 
 class AliOssServiceProvider extends ServiceProvider
@@ -56,6 +58,8 @@ class AliOssServiceProvider extends ServiceProvider
             $filesystem->addPlugin(new AllObjects());
             $filesystem->addPlugin(new Path());
             $filesystem->addPlugin(new CopyDirectory());
+            $filesystem->addPlugin(new MoveDirectory());
+            $filesystem->addPlugin(new RenameDirectory());
             return $filesystem;
         });
     }
