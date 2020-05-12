@@ -433,15 +433,16 @@ class AliOssAdapter extends AbstractAdapter
         }
 
         // 添加目录之中的目录，也是要删除的
-        $dirs = [];
-        foreach ($dirObjects['prefix'] as $dir) {
-            $dirs[] = $dir['Prefix'];
-        }
-        try {
-            $this->client->deleteObjects($this->bucket, $dirs);
-        } catch (OssException $e) {
-            $this->logErr(__FUNCTION__, $e);
-            return false;
+        if (count($dirObjects['prefix']) > 0) {
+            foreach ($dirObjects['prefix'] as $dir) {
+                $dirs[] = $dir['Prefix'];
+            }
+            try {
+                $this->client->deleteObjects($this->bucket, $dirs);
+            } catch (OssException $e) {
+                $this->logErr(__FUNCTION__, $e);
+                return false;
+            }
         }
 
         try {
