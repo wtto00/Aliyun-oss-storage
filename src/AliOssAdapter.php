@@ -433,6 +433,7 @@ class AliOssAdapter extends AbstractAdapter
         }
 
         // 添加目录之中的目录，也是要删除的
+        $dirs = [];
         foreach ($dirObjects['prefix'] as $dir) {
             $dirs[] = $dir['Prefix'];
         }
