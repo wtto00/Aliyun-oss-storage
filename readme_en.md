@@ -137,6 +137,8 @@ Or you can learn here:
    Storage::copyDirectory('path/from/','path/to/'); // Copy a directory
    Storage::moveDirectory('path/from/','path/to/'); // Move a directory
    Storage::renameDirectory('path/from/','path/to/'); // Rename a directory
+   // 分页查询指定位置的对象 并返回下一页的标记
+   Storage::objects($directory, $page_size, $next_marker); // Get all of the directories and files within a given directory by pages and next page marker
    ```
 
 ## Documentation
