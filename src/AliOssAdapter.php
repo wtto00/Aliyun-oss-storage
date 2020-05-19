@@ -1,11 +1,4 @@
 <?php
-/*
- * @Author: jacob
- * @Date: 2020-03-06 11:34:00
- * @LastEditors: wtto
- * @LastEditTime: 2020-03-08 22:11:54
- * @FilePath: \Aliyun-oss-storage\src\AliOssAdapter.php
- */
 
 namespace Wtto\AliOSS;
 
@@ -175,18 +168,6 @@ class AliOssAdapter extends AbstractAdapter
     }
 
     /**
-     * 判断路径是否是一个目录
-     *
-     * @param string $path
-     *
-     * @return boolean
-     */
-    public function isDirectory($path)
-    {
-        return ends_with($path, '/');
-    }
-
-    /**
      * Write a new file.
      *
      * @param string $path
@@ -303,9 +284,8 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function renameDirectory($path, $newpath)
     {
-        if (!$this->isDirectory($path)) {
-            return false;
-        }
+        $path = $this->applyDirPath($path);
+        $newpath = $this->applyDirPath($newpath);
 
         if (!$this->copyDirectory($path, $newpath)) {
             return false;
@@ -341,9 +321,7 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function copyDirectory($directory, $destination, $options = [])
     {
-        if (!$this->isDirectory($directory)) {
-            return false;
-        }
+        $directory = $this->applyDirPath($directory);
 
         // If the destination directory does not actually exist, we will go ahead and
         // create it recursively, which just gets the destination prepared to copy
@@ -390,6 +368,78 @@ class AliOssAdapter extends AbstractAdapter
             return false;
         }
         return $this->deleteDir($directory);
+    }
+
+    /**
+     * 分页查询所有文件及目录
+     */
+    public function listAllObjectsByPage($directory, $page_size, $next_marker)
+    {
+        $dirname = $this->applyPathPrefix($this->applyDirPath($directory));
+        $delimiter = '/';
+        $maxkeys = $page_size;
+
+        $result = [
+            'objects' => [],
+            'prefix' => [],
+            'nextMarker' => '',
+        ];
+
+        $options = [
+            'delimiter' => $delimiter,
+            'prefix' => $dirname,
+            'max-keys' => $maxkeys,
+            'marker' => $next_marker,
+        ];
+
+        try {
+            $listObjectInfo = $this->client->listObjects($this->bucket, $options);
+        } catch (OssException $e) {
+            $this->logErr(__FUNCTION__, $e);
+            // return false;
+            throw $e;
+        }
+
+        $nextMarker = $listObjectInfo->getNextMarker(); // 得到nextMarker，从上一次listObjects读到的最后一个文件的下一个文件开始继续获取文件列表
+        $objectList = $listObjectInfo->getObjectList(); // 文件列表
+        $prefixList = $listObjectInfo->getPrefixList(); // 目录列表
+
+        if (!empty($objectList)) {
+            foreach ($objectList as $objectInfo) {
+                if ($objectInfo->getKey() == $dirname) {
+                    // 目录本身不要列出
+                    continue;
+                }
+                $object['Prefix'] = $dirname;
+                $object['Key'] = $objectInfo->getKey();
+                $object['LastModified'] = $objectInfo->getLastModified();
+                $object['eTag'] = $objectInfo->getETag();
+                $object['Type'] = $objectInfo->getType();
+                $object['Size'] = $objectInfo->getSize();
+                $object['StorageClass'] = $objectInfo->getStorageClass();
+
+                $result['objects'][] = $object;
+            }
+        }
+
+        if (!empty($prefixList)) {
+            foreach ($prefixList as $prefixInfo) {
+                $result['prefix'][] = [
+                    'Prefix' => $prefixInfo->getPrefix(),
+                ];
+            }
+        }
+
+        $contents = array_merge($result['prefix'], $result["objects"]);
+        $data = array_map([$this, 'normalizeResponse'], $contents);
+        $data = array_filter($data, function ($value) {
+            return $value['path'] !== false;
+        });
+
+        return [
+            'list' => $data,
+            'nextMarker' => $nextMarker,
+        ];
     }
 
     /**
