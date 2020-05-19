@@ -17,7 +17,7 @@ class Objects extends AbstractPlugin
         return 'objects';
     }
 
-    public function handle($path, $page_size, $next_marker)
+    public function handle($path, $page_size = null, $next_marker = '')
     {
         if ($page_size === null) {
             return $this->filesystem->listContents($path);

@@ -166,7 +166,7 @@ Aliyun oss filesystem storage adapter for laravel 5. You can use Aliyun OSS just
    // 重命名目录
    Storage::renameDirectory('path/from/','path/to/');
    // 分页查询指定位置的对象 并返回下一页的标记
-   Storage::objects($directory, $page_size, $next_marker);
+   Storage::objects($directory, $page_size = null, $next_marker = '');
    ```
 
 ## 文档
